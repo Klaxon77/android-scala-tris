@@ -1,0 +1,8 @@
+defaultTasks "sayHello"
+
+task sayHello<<{
+   println "Scalatris build script is not ready. But HI"
+}
+
+
+
