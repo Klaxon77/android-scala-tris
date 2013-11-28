@@ -1,4 +1,4 @@
-package com.klaxon.tetris
+package com.klaxon.tris
 
 import android.app.Activity
 import android.os.Bundle

@@ -1,4 +1,4 @@
-scalatris
-=========
+scala-android-tris
+==================
 
-Simple android tetris written on scala. Just for fun.
+Simple android game written on scala. Just for fun.
