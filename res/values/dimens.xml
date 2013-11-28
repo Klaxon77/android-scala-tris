@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="menu_header_text_size">28dp</dimen>
+    <dimen name="menu_header_vertical_padding">10dp</dimen>
+
+    <dimen name="divider_size">2dp</dimen>
+    <dimen name="menu_padding">5dp</dimen>
+
+</resources>

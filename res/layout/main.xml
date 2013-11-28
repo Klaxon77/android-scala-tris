@@ -1,7 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <TextView android:layout_width="fill_parent"
-        android:layout_height="wrap_content" android:text="Hello World, ScalaActivity" />
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:padding="@dimen/menu_padding"
+              android:background="@color/menu_bg_color">
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/divider_size"
+        android:fadingEdge="horizontal"
+        android:fadingEdgeLength="4dp"
+        android:background="@color/divider_color"
+        />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_header"
+        android:gravity="center_horizontal"
+        android:textSize="@dimen/menu_header_text_size"
+        android:textStyle="bold"
+        android:paddingTop="@dimen/menu_header_vertical_padding"
+        android:paddingBottom="@dimen/menu_header_vertical_padding"
+        />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/divider_size"
+        android:fadingEdge="horizontal"
+        android:fadingEdgeLength="4dp"
+        android:background="@color/divider_color"
+        />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:entries="@array/menu"
+            />
+
+    </RelativeLayout>
+
+
 </LinearLayout>
