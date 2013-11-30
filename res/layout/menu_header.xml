@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content">
+
+    <include layout="@layout/menu_divider"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_header"
+        android:gravity="center_horizontal"
+        android:textSize="@dimen/menu_header_text_size"
+        android:textStyle="bold"
+        android:paddingTop="@dimen/menu_header_vertical_padding"
+        android:paddingBottom="@dimen/menu_header_vertical_padding"
+        />
+
+    <include layout="@layout/menu_divider"/>
+
+</LinearLayout>

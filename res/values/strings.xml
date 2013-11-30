@@ -2,11 +2,8 @@
 <resources>
     <string name="app_name">ScalaActivity</string>
     <string name="menu_header">GAME</string>
-
-    <array name="menu">
-        <item>Play</item>
-        <item>Score board</item>
-        <item>Exit</item>
-    </array>
+    <string name="play">Play</string>
+    <string name="score_board">Score board</string>
+    <string name="exit">Exit</string>
 
 </resources>
