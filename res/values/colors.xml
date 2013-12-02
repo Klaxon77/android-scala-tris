@@ -6,4 +6,11 @@
     <color name="menu_selector_gradient_start_color">#7181A1</color>
     <color name="menu_selector_gradient_end_color">#91A1C1</color>
 
+    <!-- blocks -->
+    <color name="red_block_color">#fff1382e</color>
+    <color name="yellow_block_color">#ff56ed00</color>
+    <color name="green_block_color">#ff33dd7f</color>
+    <color name="blue_block_color">#ff0088dd</color>
+
+
 </resources>

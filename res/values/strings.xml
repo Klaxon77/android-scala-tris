@@ -5,5 +5,7 @@
     <string name="play">Play</string>
     <string name="score_board">Score board</string>
     <string name="exit">Exit</string>
+    <string name="score">Score:</string>
+    <string name="zero">0</string>
 
 </resources>

@@ -10,4 +10,8 @@
 
     <dimen name="selector_radius">6dp</dimen>
 
+    <!-- Blocks -->
+    <dimen name="block_radius">3dp</dimen>
+
+
 </resources>
