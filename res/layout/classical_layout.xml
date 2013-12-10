@@ -13,8 +13,13 @@
         android:layout_height="@dimen/game_height"
         android:layout_margin="@dimen/game_padding"
         android:background="#CCAABB"
+        android:layout_gravity="center_vertical"
         />
 
-    <include layout="@layout/classical_info_panel"/>
+    <include
+        layout="@layout/classical_info_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"/>
 
 </LinearLayout>
