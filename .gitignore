@@ -2,6 +2,7 @@
 *.apk
 *.ap_
 *.log
+build-log.xml
 
 # files for the dex VM
 *.dex
