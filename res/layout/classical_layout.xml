@@ -2,11 +2,19 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/screen"
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <include layout="@layout/classical_game_area"/>
+    <com.klaxon.tris.classical.view.GameArea
+        android:id="@+id/game_area"
+        android:layout_width="@dimen/game_width"
+        android:layout_height="@dimen/game_height"
+        android:layout_margin="@dimen/game_padding"
+        android:background="#CCAABB"
+        />
+
     <include layout="@layout/classical_info_panel"/>
 
 </LinearLayout>
