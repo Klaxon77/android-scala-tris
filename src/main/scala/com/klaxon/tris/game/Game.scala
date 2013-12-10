@@ -11,9 +11,4 @@ trait Game extends GamePadListener {
   def setSpeed(speed: Int)
   def setGameListener(g: GameListener)
 
-  trait GameListener {
-    def onGameOver()
-    def onLinesDestroy(linesCount: Int)
-  }
-
 }
