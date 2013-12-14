@@ -2,6 +2,7 @@ package com.klaxon.tris.figures
 
 import scala.util.Random
 import com.klaxon.tris.common.Matrix
+import android.util.Log
 
 
 /**
@@ -69,7 +70,7 @@ private object Matrices {
   )
 
   def getMatrices: List[Matrix] = {
-    List(I, L, S, T, O).map(Matrix(_))
+    List(I, L, J ,S, Z, T, O).map(Matrix(_))
   }
 
 }

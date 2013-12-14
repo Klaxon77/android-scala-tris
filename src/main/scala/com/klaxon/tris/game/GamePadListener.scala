@@ -6,9 +6,9 @@ package com.klaxon.tris.game
  */
 trait GamePadListener {
 
-  def left(velocity: Int)
-  def right(velocity: Int)
-  def down(velocity: Int)
+  def left()
+  def right()
+  def down()
   def rotate()
 
 }

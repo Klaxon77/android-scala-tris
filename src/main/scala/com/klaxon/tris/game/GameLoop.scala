@@ -17,12 +17,20 @@ class GameLoop(fps: Int) {
 
   def loop(action: => Unit) = {
     require(running)
+
     handler.post(new Runnable {
       def run(): Unit = {
-        handler.postDelayed(this, delayInMillis)
-        if (running) action
+        if (!running) return
+
+        val startTime = System.currentTimeMillis()
+        action
+
+        val delayTime = delayInMillis - (System.currentTimeMillis() - startTime)
+        handler.postDelayed(this, delayTime)
       }
-    })
+    }
+
+    )
   }
 
   def stop() = {
