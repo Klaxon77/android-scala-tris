@@ -4,6 +4,7 @@ import android.view.{View, MotionEvent, GestureDetector}
 import com.klaxon.tris.game.GamePadListener
 import android.view.View.OnTouchListener
 import android.view.GestureDetector.SimpleOnGestureListener
+import android.util.Log
 
 
 class TouchPadListener(gamePad: GamePadListener) extends OnTouchListener {
@@ -16,10 +17,12 @@ class TouchPadListener(gamePad: GamePadListener) extends OnTouchListener {
 
 final case class SwipeListener(gamePad: GamePadListener) extends SimpleOnGestureListener {
   //TODO: constants to companion object
-  val SWIPE_THRESHOLD = 14
-  val SWIPE_VELOCITY_THRESHOLD = 14
+  val SWIPE_THRESHOLD = 40
 
-  override def onSingleTapConfirmed(e: MotionEvent): Boolean = {
+  var xAccumulator = 0
+  var hasMoved = false
+
+  override def onSingleTapUp(e: MotionEvent): Boolean = {
     gamePad.rotate()
     true
   }
@@ -33,25 +36,32 @@ final case class SwipeListener(gamePad: GamePadListener) extends SimpleOnGesture
 
   override def onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean = {
     val diffX = e2.getX - e1.getX
-    val diffY = e2.getY - e1.getY
+    xAccumulator += diffX.toInt
+    if (xAccumulator.abs > SWIPE_THRESHOLD) {
+      val move:()=>Unit = if (xAccumulator > 0) gamePad.right else gamePad.left
+      for (i <- 0 until (xAccumulator.abs / SWIPE_THRESHOLD)) {
+        move()
+      }
 
-    if (math.abs(diffX) > math.abs(diffY)) {
-      if (math.abs(diffX) > SWIPE_THRESHOLD) {
-        if (diffX > 0) {
-          gamePad.right(0)
-        } else {
-          gamePad.left(0)
-        }
-      }
-    } else {
-      if (math.abs(diffY) > SWIPE_THRESHOLD && diffY > 0) {
-        gamePad.down(0)
-      }
+      xAccumulator = 0
+      hasMoved = true
     }
 
+    if (hasMoved) return true
+
+    val diffY = e2.getY - e1.getY
+    if (diffY.abs > SWIPE_THRESHOLD && diffY > 0) {
+      gamePad.down()
+      hasMoved = true
+    }
 
     true
   }
 
-  override def onDown(e: MotionEvent): Boolean = true
+
+  override def onDown(e: MotionEvent): Boolean = {
+    xAccumulator = 0
+    hasMoved = false
+    true
+  }
 }

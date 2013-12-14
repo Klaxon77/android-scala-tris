@@ -4,6 +4,7 @@ import com.klaxon.tris.game.{GameListener, WorldState, GameLoop, Game}
 import com.klaxon.tris.common.Matrix
 import com.klaxon.tris.figures.MatrixFactory
 import android.graphics.Point
+import scala.annotation.tailrec
 
 /**
  * <p>User: v.pronyshyn<br/>
@@ -13,55 +14,29 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
 
   val BOARD_WIDTH = 10
   val BOARD_HEIGHT = 20
-  val board = new Matrix(BOARD_WIDTH, BOARD_HEIGHT)
+  var board = new Matrix(BOARD_HEIGHT, BOARD_WIDTH)
 
   var gameListener: GameListener = null
   var gameLoop: GameLoop = null
   var currentFigure = MatrixFactory.randFigure()
   var nextFigure = MatrixFactory.randFigure()
   var position = initialPositionFor(currentFigure)
-  var speed = 1
+  var viewYPos = position.y * view.blockHeight
+  var velocity = 1
+
+  var horizontalMove = 0
+  var downMove = false
+  var rotateMove = false
 
   view.updateNextFigure(nextFigure)
 
-  def left(velocity: Int): Unit = {
-    var x = (position.x / view.blockWidth) - 1
-    x = if (x >= 0) x else 0
-    val y = position.y / view.blockHeight
+  def left(): Unit = horizontalMove -= 1
 
-    if (!collision(x, y)) {
-      position = new Point(x * view.blockWidth, y * view.blockHeight)
-      view.update(new WorldState(board, currentFigure, position))
-    }
-  }
+  def right(): Unit = horizontalMove += 1
 
-  def right(velocity: Int): Unit = {
-    var x = (position.x / view.blockWidth) + 1
-    x = if (x < BOARD_WIDTH - currentFigure.width()) x else BOARD_WIDTH - currentFigure.width()
-    val y = position.y / view.blockHeight
+  def down(): Unit = downMove = true
 
-    if (!collision(x, y)) {
-      position = new Point(x * view.blockWidth, y * view.blockHeight)
-      view.update(new WorldState(board, currentFigure, position))
-    }
-  }
-
-  def down(velocity: Int): Unit = {
-
-  }
-
-  def rotate(): Unit = {
-    val rotatedFigure = currentFigure.rotateRight()
-    val x = position.x / view.blockWidth
-    val y = position.y / view.blockHeight - (currentFigure.width() - currentFigure.height())
-
-    if (!collision(x, y)) {
-      currentFigure = rotatedFigure
-
-      position = new Point(position.x, position.y + (currentFigure.width() - currentFigure.height()) * view.blockHeight)
-      view.update(new WorldState(board, currentFigure, position))
-    }
-  }
+  def rotate(): Unit = rotateMove = true
 
   def start(): Unit = {
     gameLoop = new GameLoop(fps)
@@ -70,78 +45,149 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
     }
   }
 
-  def update(): Unit = {
-    val newPosition = nextPosition()
+  def pause(): Unit = gameLoop.stop()
 
-    val x = newPosition.x / view.blockWidth
-    val y = newPosition.y / view.blockHeight + 1
-    if (collision(x, y)) {
-      addFigureToBoard(currentFigure, x, y - 1)
-      currentFigure = nextFigure
-      nextFigure = MatrixFactory.randFigure()
-      view.updateNextFigure(nextFigure)
-      position = initialPositionFor(currentFigure)
-      if (collision(nextPosition().x / view.blockWidth, nextPosition().y / view.blockHeight + 1)) {
-        gameLoop.stop()
-        gameListener.onGameOver()
-      }
+  def setSpeed(speed: Int): Unit = this.velocity = speed
 
-      view.update(new WorldState(board, currentFigure, position))
-      return
-    }
+  def setGameListener(g: GameListener): Unit = gameListener = g
 
-    if (y >= BOARD_HEIGHT - currentFigure.height()) {
-      addFigureToBoard(currentFigure, x, BOARD_HEIGHT - currentFigure.height())
-      currentFigure = nextFigure
-      nextFigure = MatrixFactory.randFigure()
-      view.updateNextFigure(nextFigure)
-      position = initialPositionFor(currentFigure)
-      view.update(new WorldState(board, currentFigure, position))
-      return
-    }
+  private def update(): Unit = {
+    doHorizontalMove()
+    doRotateMove()
+    doDownMove()
 
-    position = newPosition
-    view.update(new WorldState(board, currentFigure, position))
+    updateGame()
+    updateView()
   }
 
-  def collision(x: Int, y: Int): Boolean = {
-    for (i <- 0 until currentFigure.width()) {
-      for (j <- 0 until currentFigure.height() if currentFigure(i)(j) != 0) {
-        val xPos = i + x
-        val yPos = j + y
+  @tailrec
+  private def doHorizontalMove(): Unit = horizontalMove match {
+    case 0 => return
+    case _ =>
+      val movedPosition = new Point(position.x + horizontalMove.signum, position.y)
 
-        if (xPos > BOARD_WIDTH || xPos < 0) return false
-        if (yPos > BOARD_HEIGHT || yPos < 0) return false
+      if (collision(movedPosition, currentFigure)) {
+        horizontalMove = 0
+      } else {
+        position = movedPosition
+        horizontalMove -= horizontalMove.signum
+      }
 
-        if (board(xPos)(yPos) != 0) return true
+      doHorizontalMove()
+  }
+
+  private def doRotateMove() = if (rotateMove) {
+    rotateMove = false
+
+    val rotatedFigure = currentFigure.rotateRight()
+    val newPosition = new Point(position.x, position.y)
+
+    val cellsOutside = position.x + rotatedFigure.width() - BOARD_WIDTH
+    if (cellsOutside > 0) newPosition.offset(-cellsOutside, 0)
+
+    if (!collision(newPosition, rotatedFigure)) {
+      currentFigure = rotatedFigure
+      position = newPosition
+    }
+  }
+
+
+  private def doDownMove(): Unit = if (downMove) {
+    @tailrec
+    def downMoveRec(): Unit = {
+      val newPosition = nextPosition()
+      if (!collision(newPosition, currentFigure)) {
+        position = newPosition
+        viewYPos = position.y * view.blockHeight
+        downMoveRec()
+      }
+    }
+
+    downMoveRec()
+    downMove = false
+  }
+
+  def updateGame(): Unit = {
+    viewYPos += velocity
+    if (viewYPos / view.blockHeight < position.y) return
+
+    val newPosition = nextPosition()
+    if (!collision(newPosition, currentFigure)) {
+      position = newPosition
+      return
+    }
+
+    addCurrentFigureToBoard()
+    destroyLines()
+    println("BOARD", board)
+
+    currentFigure = nextFigure
+    nextFigure = MatrixFactory.randFigure()
+    view.updateNextFigure(nextFigure)
+
+    position = initialPositionFor(currentFigure)
+    viewYPos = 0
+    if (collision(position, currentFigure)) {
+      stopGame()
+    }
+
+  }
+
+  def destroyLines():Unit = {
+    val newBoard = Array.ofDim[Int](BOARD_HEIGHT, BOARD_WIDTH)
+
+    var y = BOARD_HEIGHT - 1
+    for (i <- (BOARD_HEIGHT - 1) until 0 by -1) {
+      if (!board(i).forall(_ != 0)) {
+        newBoard(y) = board(i)
+        y -= 1
+      }
+    }
+
+    board = Matrix(newBoard)
+  }
+
+  private def collision(pos: Point, figure: Matrix): Boolean = {
+    for (i <- 0 until figure.height()) {
+      for (j <- 0 until figure.width() if figure(i)(j) != 0) {
+        val yPos = i + pos.y
+        val xPos = j + pos.x
+
+        if (yPos >= BOARD_HEIGHT || yPos < 0) return true
+        if (xPos >= BOARD_WIDTH || xPos < 0) return true
+
+        if (board(yPos)(xPos) != 0) return true
       }
     }
 
     false
   }
 
-  def addFigureToBoard(figure: Matrix, x: Int, y: Int) = {
-    for (i <- 0 until figure.width()) {
-      for (j <- 0 until figure.height() if figure(i)(j) != 0) {
-        board(x + i)(y + j) = figure(i)(j)
+  private def addCurrentFigureToBoard() = {
+    for (i <- 0 until currentFigure.height()) {
+      for (j <- 0 until currentFigure.width() if currentFigure(i)(j) != 0) {
+        board(position.y + i)(position.x + j) = currentFigure(i)(j)
       }
     }
   }
 
-  def nextPosition() = new Point(position.x, position.y + speed)
-
-  def pause(): Unit = {
-    gameLoop.stop()
-  }
-
-  def setSpeed(speed: Int): Unit = this.speed = speed
-
-  def setGameListener(g: GameListener): Unit = gameListener = g
+  private def nextPosition() = new Point(position.x, position.y + 1)
 
   private def initialPositionFor(m: Matrix): Point = {
-    val x = (BOARD_WIDTH - m.width()) / 2 * view.blockWidth
-    val y = -(m.height() * view.blockHeight)
+    val x = (BOARD_WIDTH - m.width()) / 2
+    val y = 0 //1 - m.height()
     new Point(x, y)
+  }
+
+  private def stopGame() = {
+    updateView()
+    gameLoop.stop()
+    gameListener.onGameOver()
+  }
+
+  private def updateView() = {
+    val viewCurrentPosition = new Point(position.x * view.blockWidth, viewYPos)
+    view.update(new WorldState(board, currentFigure, viewCurrentPosition))
   }
 
 }

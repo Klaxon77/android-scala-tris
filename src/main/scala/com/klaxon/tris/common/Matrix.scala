@@ -1,36 +1,39 @@
 package com.klaxon.tris.common
 
+
 /**
  * Matrix class
  */
-class Matrix(val arr: Array[Array[Int]]) {
+class Matrix(arr: Array[Array[Int]]) {
 
-  def this(width: Int, height: Int) = this(Array.ofDim[Int](width, height))
+  def this(height: Int, width: Int) = this(Array.ofDim[Int](height, width))
 
   def apply(row: Int) = arr(row)
 
-  def width() = arr.length
-
-  def height() = {
+  def width() = {
     if (arr.isEmpty) 0
     else arr(0).length
   }
+
+  def height() = arr.length
 
   def isEmpty = arr.isEmpty
 
   def rotateRight(): Matrix = {
     val newHeight = width()
     val newWidth = height()
-    val newArr = Array.ofDim[Int](newWidth, newHeight)
+    val newArr = Array.ofDim[Int](newHeight, newWidth)
 
-    for (i <- 0 until newWidth) {
-      for (j <- 0 until newHeight) {
-        newArr(i)(j) = arr(j)(newWidth - 1 - i)
+    for (i <- 0 until newHeight) {
+      for (j <- 0 until newWidth) {
+        newArr(i)(j) = arr(newWidth - 1 - j)(i)
       }
     }
 
     Matrix(newArr)
   }
+
+  def array = arr
 
   override def toString = {
     arr.deep.mkString("\n")
@@ -40,6 +43,7 @@ class Matrix(val arr: Array[Array[Int]]) {
 
 object Matrix {
   def apply(arr: Array[Array[Int]]) = new Matrix(arr)
+  def apply(height: Int, width: Int) = new Matrix(height, width)
 
   def emptyMatrix() = new Matrix(Array.ofDim[Int](0, 0))
 }

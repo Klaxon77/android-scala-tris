@@ -23,12 +23,12 @@ object MatrixDrawer {
     for (i <- 0 until m.width()) {
       val left = blockSize * i
 
-      for (j <- 0 until m.height() if m(i)(j) != 0) {
+      for (j <- 0 until m.height() if m(j)(i) != 0) {
         val top = blockSize * j
         val bottom = top + blockSize
         val right = left + blockSize
 
-        val block = res.getDrawable(BlockFactory.block(m(i)(j)))
+        val block = res.getDrawable(BlockFactory.block(m(j)(i)))
         block.setBounds(left, top, right, bottom)
         block.draw(canvas)
       }

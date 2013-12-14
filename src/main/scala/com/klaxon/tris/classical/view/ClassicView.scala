@@ -25,14 +25,10 @@ class ClassicView(v: View) extends GameView{
   def blockHeight: Int = resources.getDimensionPixelSize(R.dimen.block_size)
 
   def update(world: WorldState): Unit = {
-    Log.w("OLO", "update start")
     gameArea.setWorld(world)
-    Log.w("OLO", "update end")
   }
 
   def updateNextFigure(m: Matrix): Unit = {
-    Log.w("OLO", "next figure start")
     figureView.setFigure(m)
-    Log.w("OLO", "next figure start")
   }
 }

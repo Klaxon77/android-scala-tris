@@ -25,7 +25,7 @@ class ClassicalActivity extends Activity {
 
     val view = new ClassicView(findViewById(R.id.screen))
     game = new ClassicGame(view, FPS)
-    game.setSpeed(7)
+    game.setSpeed(2)
     game.setGameListener(gameListener())
 
     initTouchPad()
