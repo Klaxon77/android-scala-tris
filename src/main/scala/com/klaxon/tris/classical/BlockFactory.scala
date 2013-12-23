@@ -1,14 +1,26 @@
 package com.klaxon.tris.classical
 
 import com.klaxon.tris.R
+import android.graphics.drawable.Drawable
+import android.content.res.Resources
 
 /**
- * <p>User: v.pronyshyn<br/>
- * Date: 12/6/13</p>
+ * Date: 12/6/13
  */
 object BlockFactory {
 
-  def block(i: Int): Int = i match {
+  var blockMap = Map[Int, Drawable]()
+
+  def blockDrawable(i: Int, res: Resources) = blockMap.get(i) match {
+    case Some(drawable) => drawable
+    case None => {
+      val drawable = res.getDrawable(drawableId(i))
+      blockMap = blockMap updated(i, drawable)
+      drawable
+    }
+  }
+
+  private def drawableId(i: Int) = i match {
     case 1 => R.drawable.red_block
     case 2 => R.drawable.green_block
     case 3 => R.drawable.blue_block
