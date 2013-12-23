@@ -6,14 +6,15 @@ import android.util.Log
 
 
 /**
- * <p>User: v.pronyshyn<br/>
  * Date: 12/3/13</p>
  */
 object MatrixFactory {
 
-  val matrices = Matrices.getMatrices
-  val random = new Random()
-  val MAX_ROTATIONS_FOR_UNIQUE_FIGURE = 4
+  private val matrices = Matrices.getMatrices
+  private val random = new Random()
+  private val MAX_ROTATIONS_FOR_UNIQUE_FIGURE = 4
+
+  def matrixList() = matrices
 
   def randFigure(): Matrix = {
     var matrix = matrices(random.nextInt(matrices.size))
@@ -22,7 +23,7 @@ object MatrixFactory {
     matrix
   }
 
-  def rotateRandomly(m: Matrix): Matrix = {
+  private def rotateRandomly(m: Matrix): Matrix = {
     var rotatedMatrix = m
 
     val rotationCount = random.nextInt(MAX_ROTATIONS_FOR_UNIQUE_FIGURE)

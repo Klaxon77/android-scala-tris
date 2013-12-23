@@ -33,6 +33,8 @@ class Matrix(arr: Array[Array[Int]]) {
     Matrix(newArr)
   }
 
+  def drop(n: Int) = Matrix(arr.drop(n))
+
   def array = arr
 
   override def toString = {

@@ -23,16 +23,11 @@ final case class SwipeListener(gamePad: GamePadListener) extends SimpleOnGesture
   var hasMoved = false
 
   override def onSingleTapUp(e: MotionEvent): Boolean = {
-    gamePad.rotate()
+    if (!hasMoved) gamePad.rotate()
     true
   }
 
-
-  override def onDoubleTap(e: MotionEvent): Boolean = {
-    gamePad.rotate()
-    true
-  }
-
+  override def onDoubleTap(e: MotionEvent): Boolean = onSingleTapUp(e)
 
   override def onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean = {
     val diffX = e2.getX - e1.getX

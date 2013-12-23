@@ -13,8 +13,11 @@ import scala.annotation.tailrec
 class ClassicGame(view: GameView, fps: Int) extends Game {
 
   val BOARD_WIDTH = 10
-  val BOARD_HEIGHT = 20
-  var board = new Matrix(BOARD_HEIGHT, BOARD_WIDTH)
+  val VISIBLE_BOARD_PART_HEIGHT = 20
+  val INVISIBLE_BOARD_PART_HEIGHT = calculateMaxFigureHeight() - 1
+  val TOTAL_BOARD_HEIGHT = VISIBLE_BOARD_PART_HEIGHT + INVISIBLE_BOARD_PART_HEIGHT
+
+  var board = new Matrix(TOTAL_BOARD_HEIGHT, BOARD_WIDTH)
 
   var gameListener: GameListener = null
   var gameLoop: GameLoop = null
@@ -29,6 +32,14 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
   var rotateMove = false
 
   view.updateNextFigure(nextFigure)
+
+  private def calculateMaxFigureHeight(): Int = {
+    MatrixFactory.matrixList().
+      foldLeft(0)(
+        (currentMax, matrix) => math.max(currentMax, math.max(matrix.height(), matrix.width()))
+      )
+  }
+
 
   def left(): Unit = horizontalMove -= 1
 
@@ -62,7 +73,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
 
   @tailrec
   private def doHorizontalMove(): Unit = horizontalMove match {
-    case 0 => return
+    case 0 =>
     case _ =>
       val movedPosition = new Point(position.x + horizontalMove.signum, position.y)
 
@@ -80,14 +91,17 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
     rotateMove = false
 
     val rotatedFigure = currentFigure.rotateRight()
-    val newPosition = new Point(position.x, position.y)
 
     val cellsOutside = position.x + rotatedFigure.width() - BOARD_WIDTH
-    if (cellsOutside > 0) newPosition.offset(-cellsOutside, 0)
+    val xPosition = if (cellsOutside > 0) position.x - cellsOutside else position.x
+
+    val yDiffPosition = currentFigure.height() - rotatedFigure.height()
+    val newPosition = new Point(xPosition, position.y + yDiffPosition)
 
     if (!collision(newPosition, rotatedFigure)) {
       currentFigure = rotatedFigure
       position = newPosition
+      viewYPos += yDiffPosition * view.blockHeight
     }
   }
 
@@ -119,25 +133,24 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
 
     addCurrentFigureToBoard()
     destroyLines()
-    println("BOARD", board)
 
     currentFigure = nextFigure
     nextFigure = MatrixFactory.randFigure()
     view.updateNextFigure(nextFigure)
 
     position = initialPositionFor(currentFigure)
-    viewYPos = 0
+    viewYPos = position.y * view.blockHeight
     if (collision(position, currentFigure)) {
       stopGame()
     }
 
   }
 
-  def destroyLines():Unit = {
-    val newBoard = Array.ofDim[Int](BOARD_HEIGHT, BOARD_WIDTH)
+  def destroyLines(): Unit = {
+    val newBoard = Array.ofDim[Int](TOTAL_BOARD_HEIGHT, BOARD_WIDTH)
 
-    var y = BOARD_HEIGHT - 1
-    for (i <- (BOARD_HEIGHT - 1) until 0 by -1) {
+    var y = TOTAL_BOARD_HEIGHT - 1
+    for (i <- (TOTAL_BOARD_HEIGHT - 1) until 0 by -1) {
       if (!board(i).forall(_ != 0)) {
         newBoard(y) = board(i)
         y -= 1
@@ -153,7 +166,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
         val yPos = i + pos.y
         val xPos = j + pos.x
 
-        if (yPos >= BOARD_HEIGHT || yPos < 0) return true
+        if (yPos >= TOTAL_BOARD_HEIGHT || yPos < 0) return true
         if (xPos >= BOARD_WIDTH || xPos < 0) return true
 
         if (board(yPos)(xPos) != 0) return true
@@ -175,7 +188,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
 
   private def initialPositionFor(m: Matrix): Point = {
     val x = (BOARD_WIDTH - m.width()) / 2
-    val y = 0 //1 - m.height()
+    val y = INVISIBLE_BOARD_PART_HEIGHT - m.height() + 1
     new Point(x, y)
   }
 
@@ -186,8 +199,9 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
   }
 
   private def updateView() = {
-    val viewCurrentPosition = new Point(position.x * view.blockWidth, viewYPos)
-    view.update(new WorldState(board, currentFigure, viewCurrentPosition))
+    val viewCurrentPosition = new Point(position.x * view.blockWidth, viewYPos - (INVISIBLE_BOARD_PART_HEIGHT * view.blockHeight))
+    val visibleBoard = board.drop(INVISIBLE_BOARD_PART_HEIGHT)
+    view.update(new WorldState(visibleBoard, currentFigure, viewCurrentPosition))
   }
 
 }
