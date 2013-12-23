@@ -1,12 +1,12 @@
 package com.klaxon.tris.classical.view
 
 import android.content.Context
-import android.util.{Log, AttributeSet}
+import android.util.AttributeSet
 import android.view.View
 import com.klaxon.tris.game.WorldState
-import android.graphics.Canvas
-import com.klaxon.tris.classical.MatrixDrawer
-import android.widget.Toast
+import android.graphics.{Rect, Canvas}
+import com.klaxon.tris.R
+import android.graphics.drawable.Drawable
 
 /**
  * <p>User: v.pronyshyn<br/>
@@ -15,6 +15,7 @@ import android.widget.Toast
 class GameArea(c: Context, a: AttributeSet) extends View(c, a) {
 
   var world: WorldState = null
+  val blockSize = getResources.getDimensionPixelSize(R.dimen.block_size)
 
   def setWorld(world: WorldState) = {
     this.world = world
@@ -25,16 +26,18 @@ class GameArea(c: Context, a: AttributeSet) extends View(c, a) {
     super.onDraw(canvas)
 
     if (world == null) {
-      Toast.makeText(getContext, "null", 300).show()
       return
     }
 
-    val boardDrawable = MatrixDrawer.makeDrawable(world.board, getResources)
+    val boardDrawable = new MatrixDrawable(world.board, blockSize, getResources)
     boardDrawable.setBounds(0, 0, getWidth, getHeight)
     boardDrawable.draw(canvas)
 
-    val figureDrawable = MatrixDrawer.makeDrawable(world.figure, getResources)
-    figureDrawable.setBounds(world.position.x, world.position.y, world.position.x + figureDrawable.getIntrinsicWidth, world.position.y + figureDrawable.getIntrinsicHeight)
+    val figureDrawable = new MatrixDrawable(world.figure, blockSize, getResources)
+    figureDrawable.setBounds(bounds(world.position.x, world.position.y, figureDrawable))
     figureDrawable.draw(canvas)
   }
+
+  private def bounds(x: Int, y: Int, d: Drawable) = new Rect(x, y, x + d.getMinimumWidth, y + d.getMinimumHeight)
+
 }

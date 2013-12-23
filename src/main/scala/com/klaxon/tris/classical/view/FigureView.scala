@@ -3,10 +3,10 @@ package com.klaxon.tris.classical.view
 import android.view.View
 import android.graphics._
 import android.content.Context
-import android.util.AttributeSet
+import android.util.{Log, AttributeSet}
 import android.graphics.drawable.Drawable
 import com.klaxon.tris.common.Matrix
-import com.klaxon.tris.classical.MatrixDrawer
+import com.klaxon.tris.R
 
 /**
  * <p>User: v.pronyshyn<br/>
@@ -15,6 +15,7 @@ import com.klaxon.tris.classical.MatrixDrawer
 class FigureView(c: Context, a: AttributeSet) extends View(c, a) {
 
   var matrix: Matrix = Matrix.emptyMatrix()
+  val blockSize = getResources.getDimensionPixelSize(R.dimen.block_size)
 
   def setFigure(m: Matrix) = {
     matrix = m
@@ -26,21 +27,23 @@ class FigureView(c: Context, a: AttributeSet) extends View(c, a) {
 
     if (matrix == null) return
 
-    val figureDrawable = MatrixDrawer.makeDrawable(matrix, getResources)
+    val figureDrawable = new MatrixDrawable(matrix, blockSize, getResources)
     figureDrawable.setBounds(centerBoundsFor(figureDrawable))
     figureDrawable.draw(canvas)
   }
 
   private def centerBoundsFor(drawable: Drawable):Rect = {
-    val drawableWidth = drawable.getIntrinsicWidth
-    val drawableHeight = drawable.getIntrinsicHeight
+    val drawableWidth = drawable.getMinimumWidth
+    val drawableHeight = drawable.getMinimumHeight
 
-    val left = (getWidth - drawableWidth) / 2
-    val top = (getHeight - drawableHeight) / 2
+    val left = (getWidth - drawableWidth) >> 1
+    val top = (getHeight - drawableHeight) >> 1
     val right = left + drawableWidth
     val bottom = top + drawableHeight
 
     new Rect(left, top, right, bottom)
   }
+
+
 
 }
