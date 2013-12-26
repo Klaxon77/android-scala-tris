@@ -9,6 +9,7 @@ import com.klaxon.tris.game.{GamePadListener, GameListener, Game}
 import android.view.View.OnTouchListener
 import android.widget.Toast
 import android.util.Log
+import com.klaxon.tris.common.Matrix
 
 /**
  * <p>User: v.pronyshyn<br/>
@@ -17,7 +18,7 @@ import android.util.Log
 class ClassicalActivity extends Activity {
 
   val FPS = 60
-  var game: Game = null
+  var game: Game = _
 
   override def onCreate(savedInstanceState: Bundle) = {
     super.onCreate(savedInstanceState)
@@ -25,11 +26,9 @@ class ClassicalActivity extends Activity {
 
     val view = new ClassicView(findViewById(R.id.screen))
     game = new ClassicGame(view, FPS)
-    game.setSpeed(2)
     game.setGameListener(gameListener())
 
     initTouchPad()
-    game.start()
   }
 
   private def initTouchPad() {
@@ -42,8 +41,16 @@ class ClassicalActivity extends Activity {
       Toast.makeText(ClassicalActivity.this, "Game over", 1500).show()
       finish()
     }
+  }
 
-    def onLinesDestroy(linesCount: Int): Unit = {}
+  override def onPause(): Unit = {
+    super.onPause()
+    game.pause()
+  }
+
+  override def onResume(): Unit = {
+    super.onResume()
+    game.start()
   }
 
 }

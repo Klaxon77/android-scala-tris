@@ -5,6 +5,7 @@ import com.klaxon.tris.common.Matrix
 import com.klaxon.tris.figures.MatrixFactory
 import android.graphics.Point
 import scala.annotation.tailrec
+import android.util.Log
 
 /**
  * <p>User: v.pronyshyn<br/>
@@ -12,33 +13,26 @@ import scala.annotation.tailrec
  */
 class ClassicGame(view: GameView, fps: Int) extends Game {
 
-  val BOARD_WIDTH = 10
-  val VISIBLE_BOARD_PART_HEIGHT = 20
-  val INVISIBLE_BOARD_PART_HEIGHT = calculateMaxFigureHeight() - 1
-  val TOTAL_BOARD_HEIGHT = VISIBLE_BOARD_PART_HEIGHT + INVISIBLE_BOARD_PART_HEIGHT
+  private val BOARD_WIDTH = 10
+  private val VISIBLE_BOARD_PART_HEIGHT = 20
+  private val INVISIBLE_BOARD_PART_HEIGHT = ClassicGame.calculateMaxFigureHeight() - 1
+  private val TOTAL_BOARD_HEIGHT = VISIBLE_BOARD_PART_HEIGHT + INVISIBLE_BOARD_PART_HEIGHT
 
-  var board = new Matrix(TOTAL_BOARD_HEIGHT, BOARD_WIDTH)
+  private val gameLoop = new GameLoop(fps)
 
-  var gameListener: GameListener = null
-  var gameLoop: GameLoop = null
-  var currentFigure = MatrixFactory.randFigure()
-  var nextFigure = MatrixFactory.randFigure()
-  var position = initialPositionFor(currentFigure)
-  var viewYPos = position.y * view.blockHeight
-  var velocity = 1
+  private var board = new Matrix(TOTAL_BOARD_HEIGHT, BOARD_WIDTH)
+  private var gameListener: GameListener = _
+  private var currentFigure = MatrixFactory.randFigure()
+  private var nextFigure = MatrixFactory.randFigure()
+  private var position = initialPositionFor(currentFigure)
+  private var viewYPos = position.y * view.blockHeight
+  private var velocity = 1
 
-  var horizontalMove = 0
-  var downMove = false
-  var rotateMove = false
+  private var horizontalMove = 0
+  private var downMove = false
+  private var rotateMove = false
 
   view.updateNextFigure(nextFigure)
-
-  private def calculateMaxFigureHeight(): Int = {
-    MatrixFactory.matrixList().
-      foldLeft(0)(
-        (currentMax, matrix) => math.max(currentMax, math.max(matrix.height(), matrix.width()))
-      )
-  }
 
 
   def left(): Unit = horizontalMove -= 1
@@ -50,7 +44,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
   def rotate(): Unit = rotateMove = true
 
   def start(): Unit = {
-    gameLoop = new GameLoop(fps)
+    gameLoop.stop()
     gameLoop.loop {
       update()
     }
@@ -121,7 +115,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
     downMove = false
   }
 
-  def updateGame(): Unit = {
+  private def updateGame(): Unit = {
     viewYPos += velocity
     if (viewYPos / view.blockHeight < position.y) return
 
@@ -141,12 +135,12 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
     position = initialPositionFor(currentFigure)
     viewYPos = position.y * view.blockHeight
     if (collision(position, currentFigure)) {
-      stopGame()
+      gameOver()
     }
 
   }
 
-  def destroyLines(): Unit = {
+  private def destroyLines(): Unit = {
     val newBoard = Array.ofDim[Int](TOTAL_BOARD_HEIGHT, BOARD_WIDTH)
 
     var y = TOTAL_BOARD_HEIGHT - 1
@@ -192,7 +186,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
     new Point(x, y)
   }
 
-  private def stopGame() = {
+  private def gameOver() = {
     updateView()
     gameLoop.stop()
     gameListener.onGameOver()
@@ -204,4 +198,13 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
     view.update(new WorldState(visibleBoard, currentFigure, viewCurrentPosition))
   }
 
+}
+
+object ClassicGame {
+  private def calculateMaxFigureHeight(): Int = {
+    MatrixFactory.matrixList().
+      foldLeft(0)(
+        (currentMax, matrix) => math.max(currentMax, math.max(matrix.height(), matrix.width()))
+      )
+  }
 }
