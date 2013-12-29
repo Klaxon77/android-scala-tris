@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
 import android.content.Intent
-import com.klaxon.tris.classical.ClassicalActivity
+import com.klaxon.tris.classical.ClassicGameActivity
 
 class MenuActivity extends Activity {
 
@@ -18,7 +18,7 @@ class MenuActivity extends Activity {
   }
 
   private def startClassicalGame = {
-    val intent = new Intent(this, classOf[ClassicalActivity])
+    val intent = new Intent(this, classOf[ClassicGameActivity])
     startActivity(intent)
   }
 

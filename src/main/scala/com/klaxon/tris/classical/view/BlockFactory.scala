@@ -1,4 +1,4 @@
-package com.klaxon.tris.classical
+package com.klaxon.tris.classical.view
 
 import com.klaxon.tris.R
 import android.graphics.drawable.Drawable

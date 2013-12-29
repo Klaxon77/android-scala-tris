@@ -3,7 +3,6 @@ package com.klaxon.tris.classical.view
 import android.graphics.drawable.Drawable
 import android.graphics.{PixelFormat, Canvas, ColorFilter}
 import com.klaxon.tris.common.Matrix
-import com.klaxon.tris.classical.BlockFactory
 import android.content.res.Resources
 
 /**

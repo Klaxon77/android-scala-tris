@@ -7,7 +7,7 @@ import com.klaxon.tris.classical.view.ClassicView
 import android.view.{MotionEvent, View}
 import com.klaxon.tris.game.{GamePadListener, GameListener, Game}
 import android.view.View.OnTouchListener
-import android.widget.Toast
+import android.widget.{TextView, Toast}
 import android.util.Log
 import com.klaxon.tris.common.Matrix
 
@@ -15,7 +15,7 @@ import com.klaxon.tris.common.Matrix
  * <p>User: v.pronyshyn<br/>
  * Date: 12/2/13</p>
  */
-class ClassicalActivity extends Activity {
+class ClassicGameActivity extends Activity {
 
   val FPS = 60
   var game: Game = _
@@ -26,22 +26,25 @@ class ClassicalActivity extends Activity {
 
     val view = new ClassicView(findViewById(R.id.screen))
     game = new ClassicGame(view, FPS)
-    game.setGameListener(gameListener())
+    game.addListener(gameOverListener())
+    game.addListener(scoreListener())
 
-    initTouchPad()
+    initManipulator()
   }
 
-  private def initTouchPad() {
+  private def initManipulator() {
     val screen = findViewById(R.id.screen)
     screen.setOnTouchListener(new TouchPadListener(game))
   }
 
-  private def gameListener(): GameListener = new GameListener {
-    def onGameOver(): Unit = {
-      Toast.makeText(ClassicalActivity.this, "Game over", 1500).show()
+  private def gameOverListener(): GameListener = new GameListener {
+    override def onGameOver(): Unit = {
+      Toast.makeText(ClassicGameActivity.this, "Game over", 1500).show()
       finish()
     }
   }
+
+  private def scoreListener(): GameListener = new ScoreController(findViewById(R.id.score).asInstanceOf[TextView])
 
   override def onPause(): Unit = {
     super.onPause()

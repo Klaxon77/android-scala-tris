@@ -54,8 +54,6 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
 
   def setSpeed(speed: Int): Unit = this.velocity = speed
 
-  def setGameListener(g: GameListener): Unit = gameListener = g
-
   private def update(): Unit = {
     doHorizontalMove()
     doRotateMove()
@@ -144,14 +142,13 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
     val newBoard = Array.ofDim[Int](TOTAL_BOARD_HEIGHT, BOARD_WIDTH)
 
     var y = TOTAL_BOARD_HEIGHT - 1
-    for (i <- (TOTAL_BOARD_HEIGHT - 1) until 0 by -1) {
-      if (!board(i).forall(_ != 0)) {
-        newBoard(y) = board(i)
-        y -= 1
-      }
+    for (i <- (TOTAL_BOARD_HEIGHT - 1) until 0 by -1 if !board(i).forall(_ != 0)) {
+      newBoard(y) = board(i)
+      y -= 1
     }
 
     board = Matrix(newBoard)
+    notifyOnLinesDestroy(y, BOARD_WIDTH)
   }
 
   private def collision(pos: Point, figure: Matrix): Boolean = {
@@ -176,6 +173,8 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
         board(position.y + i)(position.x + j) = currentFigure(i)(j)
       }
     }
+
+    notifyFigureAdded(currentFigure)
   }
 
   private def nextPosition() = new Point(position.x, position.y + 1)
