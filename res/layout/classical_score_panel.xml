@@ -10,13 +10,16 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:text="@string/score"
+        android:textSize="@dimen/score_label_text_size"
+        android:clickable="false"
         />
 
     <TextView
         android:id="@+id/score"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="@string/zero"
+        android:textStyle="bold"
+        android:textSize="@dimen/score_text_size"
         />
 
 </LinearLayout>

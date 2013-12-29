@@ -12,7 +12,7 @@
         android:layout_width="@dimen/game_width"
         android:layout_height="@dimen/game_height"
         android:layout_margin="@dimen/game_padding"
-        android:background="#CCAABB"
+        android:background="@color/game_bg_color"
         android:layout_gravity="center_vertical"
         />
 

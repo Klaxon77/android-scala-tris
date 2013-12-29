@@ -12,6 +12,7 @@ import com.klaxon.tris.common.Matrix
 class ScoreController(scoreView: TextView) extends GameListener {
 
   private val scoreCalculator = new ScoreCalculator
+  scoreView.setText(scoreCalculator.currentScore.toString)
 
   override def onLinesDestroy(linesCount: Int, cellsInLine: Int): Unit = {
     scoreCalculator.onLinesDestroy(linesCount, cellsInLine)

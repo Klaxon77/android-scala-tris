@@ -21,7 +21,6 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
   private val gameLoop = new GameLoop(fps)
 
   private var board = new Matrix(TOTAL_BOARD_HEIGHT, BOARD_WIDTH)
-  private var gameListener: GameListener = _
   private var currentFigure = MatrixFactory.randFigure()
   private var nextFigure = MatrixFactory.randFigure()
   private var position = initialPositionFor(currentFigure)
@@ -188,7 +187,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
   private def gameOver() = {
     updateView()
     gameLoop.stop()
-    gameListener.onGameOver()
+    notifyGameOver()
   }
 
   private def updateView() = {

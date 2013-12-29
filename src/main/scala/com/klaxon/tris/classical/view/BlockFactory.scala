@@ -26,7 +26,7 @@ object BlockFactory {
     case 3 => R.drawable.blue_block
     case 4 => R.drawable.orange_block
     case 5 => R.drawable.yellow_block
-    case 6 => R.drawable.white_block
+    case 6 => R.drawable.dark_blue_block
     case 7 => R.drawable.pink_block
     case _ => throw new UnsupportedOperationException()
   }

@@ -8,12 +8,15 @@
 
     <!-- blocks -->
     <color name="red_block_color">#fff1382e</color>
-    <color name="yellow_block_color">#ff56ed00</color>
-    <color name="green_block_color">#ff33dd7f</color>
+    <color name="yellow_block_color">#ffe3a500</color>
+    <color name="green_block_color">#ff04a34d</color>
     <color name="blue_block_color">#ff0088dd</color>
     <color name="pink_block_color">#ffdd5f9c</color>
-    <color name="white_block_color">#ff79ffe0</color>
+    <color name="dark_blue_block_color">#ff395574</color>
     <color name="orange_block_color">#ffff7f43</color>
+
+    <!-- game -->
+    <color name="game_bg_color">#ffbae0ed</color>
 
 
 </resources>
