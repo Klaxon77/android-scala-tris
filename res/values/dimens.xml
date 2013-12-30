@@ -24,8 +24,8 @@
     <dimen name="figure_view_size">120dp</dimen>
 
     <!-- Score -->
-    <dimen name="score_label_text_size">20dp</dimen>
-    <dimen name="score_text_size">24dp</dimen>
+    <dimen name="info_label_text_size">20dp</dimen>
+    <dimen name="info_text_size">24dp</dimen>
 
 
 </resources>

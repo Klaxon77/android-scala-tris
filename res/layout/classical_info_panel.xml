@@ -12,8 +12,9 @@
         android:layout_width="@dimen/figure_view_size"
         android:layout_height="@dimen/figure_view_size"
         android:background="@color/game_bg_color"
-     />
+        />
 
     <include layout="@layout/classical_score_panel"/>
+    <include layout="@layout/classic_level_panel"/>
 
 </LinearLayout>

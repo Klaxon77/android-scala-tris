@@ -18,7 +18,7 @@
 
         <!-- Classical -->
         <activity
-            android:name=".classical.ClassicalActivity"
+            android:name=".classical.ClassicGameActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:screenOrientation="portrait"/>
 

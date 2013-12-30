@@ -4,12 +4,10 @@ import android.app.Activity
 import android.os.Bundle
 import com.klaxon.tris.R
 import com.klaxon.tris.classical.view.ClassicView
-import android.view.{MotionEvent, View}
-import com.klaxon.tris.game.{GamePadListener, GameListener, Game}
-import android.view.View.OnTouchListener
+import com.klaxon.tris.game.{GameListener, Game}
 import android.widget.{TextView, Toast}
+import android.content.res.Resources
 import android.util.Log
-import com.klaxon.tris.common.Matrix
 
 /**
  * <p>User: v.pronyshyn<br/>
@@ -24,18 +22,18 @@ class ClassicGameActivity extends Activity {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.classical_layout)
 
-    val view = new ClassicView(findViewById(R.id.screen))
-    game = new ClassicGame(view, FPS)
+    game = new ClassicGame(new ClassicGameInfo(getResources), FPS)
+    game.addListener(gameListener())
     game.addListener(gameOverListener())
     game.addListener(scoreListener())
+    game.addListener(levelListener())
 
     initManipulator()
   }
 
-  private def initManipulator() {
-    val screen = findViewById(R.id.screen)
-    screen.setOnTouchListener(new TouchPadListener(game))
-  }
+  private def scoreListener(): GameListener = new ScoreController(findViewById(R.id.score).asInstanceOf[TextView])
+  private def levelListener(): GameListener = new LevelController(findViewById(R.id.level).asInstanceOf[TextView])
+  private def gameListener(): GameListener = new ClassicView(findViewById(R.id.screen))
 
   private def gameOverListener(): GameListener = new GameListener {
     override def onGameOver(): Unit = {
@@ -44,7 +42,10 @@ class ClassicGameActivity extends Activity {
     }
   }
 
-  private def scoreListener(): GameListener = new ScoreController(findViewById(R.id.score).asInstanceOf[TextView])
+  private def initManipulator() {
+    val screen = findViewById(R.id.screen)
+    screen.setOnTouchListener(new TouchPadListener(game))
+  }
 
   override def onPause(): Unit = {
     super.onPause()
@@ -56,4 +57,15 @@ class ClassicGameActivity extends Activity {
     game.start()
   }
 
+}
+
+private class ClassicGameInfo(r: Resources) extends GameInfo {
+  val gWidth = r.getDimensionPixelSize(R.dimen.game_width)
+  val gHeight = r.getDimensionPixelSize(R.dimen.game_height)
+  val blockSize = r.getDimensionPixelSize(R.dimen.block_size)
+
+  def gameWidth: Int = gWidth
+  def gameHeight: Int = gHeight
+  def blockWidth: Int = blockSize
+  def blockHeight: Int = blockSize
 }
