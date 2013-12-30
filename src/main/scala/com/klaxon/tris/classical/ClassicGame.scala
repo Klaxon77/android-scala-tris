@@ -6,12 +6,14 @@ import com.klaxon.tris.figures.MatrixFactory
 import android.graphics.Point
 import scala.annotation.tailrec
 import android.util.Log
+import com.klaxon.tris.game.level.SimpleLevelComponent
+import com.klaxon.tris.game.score.SimpleScoreCalculatorComponent
 
 /**
  * <p>User: v.pronyshyn<br/>
  * Date: 12/7/13</p>
  */
-class ClassicGame(view: GameView, fps: Int) extends Game {
+class ClassicGame(gameInfo: GameInfo, fps: Int) extends Game with SimpleLevelComponent with SimpleScoreCalculatorComponent {
 
   private val BOARD_WIDTH = 10
   private val VISIBLE_BOARD_PART_HEIGHT = 20
@@ -24,15 +26,11 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
   private var currentFigure = MatrixFactory.randFigure()
   private var nextFigure = MatrixFactory.randFigure()
   private var position = initialPositionFor(currentFigure)
-  private var viewYPos = position.y * view.blockHeight
-  private var velocity = 1
+  private var viewYPos = position.y * gameInfo.blockHeight
 
   private var horizontalMove = 0
   private var downMove = false
   private var rotateMove = false
-
-  view.updateNextFigure(nextFigure)
-
 
   def left(): Unit = horizontalMove -= 1
 
@@ -42,7 +40,11 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
 
   def rotate(): Unit = rotateMove = true
 
-  def start(): Unit = {
+  override def start(): Unit = {
+    notifyScoreChanged(scoreCalculator.currentScore)
+    notifyLevelChanged(levelCalculator.currentLevel)
+    notifyNextFigureChanged(nextFigure)
+
     gameLoop.stop()
     gameLoop.loop {
       update()
@@ -50,8 +52,6 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
   }
 
   def pause(): Unit = gameLoop.stop()
-
-  def setSpeed(speed: Int): Unit = this.velocity = speed
 
   private def update(): Unit = {
     doHorizontalMove()
@@ -92,7 +92,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
     if (!collision(newPosition, rotatedFigure)) {
       currentFigure = rotatedFigure
       position = newPosition
-      viewYPos += yDiffPosition * view.blockHeight
+      viewYPos += yDiffPosition * gameInfo.blockHeight
     }
   }
 
@@ -103,7 +103,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
       val newPosition = nextPosition()
       if (!collision(newPosition, currentFigure)) {
         position = newPosition
-        viewYPos = position.y * view.blockHeight
+        viewYPos = position.y * gameInfo.blockHeight
         downMoveRec()
       }
     }
@@ -113,8 +113,8 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
   }
 
   private def updateGame(): Unit = {
-    viewYPos += velocity
-    if (viewYPos / view.blockHeight < position.y) return
+    viewYPos += levelCalculator.currentLevel
+    if (viewYPos / gameInfo.blockHeight < position.y) return
 
     val newPosition = nextPosition()
     if (!collision(newPosition, currentFigure)) {
@@ -127,10 +127,10 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
 
     currentFigure = nextFigure
     nextFigure = MatrixFactory.randFigure()
-    view.updateNextFigure(nextFigure)
+    notifyNextFigureChanged(nextFigure)
 
     position = initialPositionFor(currentFigure)
-    viewYPos = position.y * view.blockHeight
+    viewYPos = position.y * gameInfo.blockHeight
     if (collision(position, currentFigure)) {
       gameOver()
     }
@@ -147,7 +147,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
     }
 
     board = Matrix(newBoard)
-    notifyOnLinesDestroy(y, BOARD_WIDTH)
+    onLinesDestroyed(linesCount = y, cellsInLine = BOARD_WIDTH)
   }
 
   private def collision(pos: Point, figure: Matrix): Boolean = {
@@ -173,7 +173,7 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
       }
     }
 
-    notifyFigureAdded(currentFigure)
+    onFigureAdded(currentFigure)
   }
 
   private def nextPosition() = new Point(position.x, position.y + 1)
@@ -191,9 +191,10 @@ class ClassicGame(view: GameView, fps: Int) extends Game {
   }
 
   private def updateView() = {
-    val viewCurrentPosition = new Point(position.x * view.blockWidth, viewYPos - (INVISIBLE_BOARD_PART_HEIGHT * view.blockHeight))
+    val viewCurrentPosition = new Point(position.x * gameInfo.blockWidth, viewYPos - (INVISIBLE_BOARD_PART_HEIGHT * gameInfo.blockHeight))
     val visibleBoard = board.drop(INVISIBLE_BOARD_PART_HEIGHT)
-    view.update(new WorldState(visibleBoard, currentFigure, viewCurrentPosition))
+
+    notifyWorldChanged(new WorldState(visibleBoard, currentFigure, viewCurrentPosition))
   }
 
 }
