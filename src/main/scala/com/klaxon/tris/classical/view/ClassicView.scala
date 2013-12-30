@@ -20,7 +20,7 @@ class ClassicView(v: View) extends GameListener{
 
   override def onWorldChanged(world: WorldState): Unit = gameArea.setWorld(world)
 
-  override def onScoreChanged(score: Int): Unit = scoreTextView.setText(score.toInt)
+  override def onScoreChanged(score: Int): Unit = scoreTextView.setText(score.toString)
 
-  override def onLevelChanged(level: Int): Unit = levelTextView.setText(level.toInt)
+  override def onLevelChanged(level: Int): Unit = levelTextView.setText(level.toString)
 }

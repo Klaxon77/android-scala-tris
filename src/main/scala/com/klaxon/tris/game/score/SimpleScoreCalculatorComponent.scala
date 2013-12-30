@@ -17,7 +17,7 @@ trait SimpleScoreCalculatorComponent extends ScoreCalculatorComponent {
 
     override def onLinesDestroyed(game: Game, lines: Int, cellsInLine: Int) = score += (game.level * lines * cellsInLine * 0.2).toInt
 
-    override def onFigureAdded(game: Game, figure: Matrix) = score += (game.level * 0.7).toInt
+    override def onFigureAdded(game: Game, figure: Matrix) = score += game.level
   }
 
 }
