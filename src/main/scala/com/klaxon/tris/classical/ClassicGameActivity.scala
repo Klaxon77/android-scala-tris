@@ -40,7 +40,7 @@ class ClassicGameActivity extends Activity {
 
   private def initManipulator() {
     val screen = findViewById(R.id.screen)
-    screen.setOnTouchListener(new TouchPadListener(game))
+    screen.setOnTouchListener(new TouchPadListener(game, getResources.getDimensionPixelSize(R.dimen.block_size)))
   }
 
   override def onPause(): Unit = {
