@@ -25,14 +25,10 @@ class ClassicGameActivity extends Activity {
     game = new ClassicGame(new ClassicGameInfo(getResources), FPS)
     game.addListener(gameListener())
     game.addListener(gameOverListener())
-    game.addListener(scoreListener())
-    game.addListener(levelListener())
 
     initManipulator()
   }
 
-  private def scoreListener(): GameListener = new ScoreController(findViewById(R.id.score).asInstanceOf[TextView])
-  private def levelListener(): GameListener = new LevelController(findViewById(R.id.level).asInstanceOf[TextView])
   private def gameListener(): GameListener = new ClassicView(findViewById(R.id.screen))
 
   private def gameOverListener(): GameListener = new GameListener {
@@ -65,7 +61,10 @@ private class ClassicGameInfo(r: Resources) extends GameInfo {
   val blockSize = r.getDimensionPixelSize(R.dimen.block_size)
 
   def gameWidth: Int = gWidth
+
   def gameHeight: Int = gHeight
+
   def blockWidth: Int = blockSize
+
   def blockHeight: Int = blockSize
 }

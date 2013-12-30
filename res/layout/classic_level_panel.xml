@@ -5,4 +5,19 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
 
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="@string/level"
+        android:textSize="@dimen/info_label_text_size"
+        />
+
+    <TextView
+        android:id="@+id/level"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:textStyle="bold"
+        android:textSize="@dimen/info_text_size"
+        />
+
 </LinearLayout>
