@@ -15,9 +15,8 @@ class TouchPadListener(gamePad: GamePadListener, swipeThreshold: Int) extends On
 }
 
 final case class SwipeListener(gamePad: GamePadListener, swipeThreshold: Int) extends SimpleOnGestureListener {
-  val verticalSwipeThreshold = swipeThreshold * 2
-
   var xAccumulator = 0
+  var yAccumulator = 0
   var hasMoved = false
 
   override def onSingleTapUp(e: MotionEvent): Boolean = {
@@ -42,7 +41,8 @@ final case class SwipeListener(gamePad: GamePadListener, swipeThreshold: Int) ex
 
     if (hasMoved) return true
 
-    if (distanceY < -verticalSwipeThreshold) {
+    yAccumulator += distanceY.toInt
+    if (yAccumulator < -swipeThreshold) {
       gamePad.down()
       hasMoved = true
     }
@@ -52,6 +52,7 @@ final case class SwipeListener(gamePad: GamePadListener, swipeThreshold: Int) ex
 
   override def onDown(e: MotionEvent): Boolean = {
     xAccumulator = 0
+    yAccumulator = 0
     hasMoved = false
     true
   }
