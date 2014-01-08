@@ -17,11 +17,18 @@ class ClassicGameActivity extends Activity {
 
   val FPS = 60
   var game: Game = _
+  var pauseDialog: PauseDialog = _
+  var isPaused = false
 
   override def onCreate(savedInstanceState: Bundle) = {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.classical_layout)
 
+    initGame()
+    initPauseDialog()
+  }
+
+  private def initGame() = {
     game = new ClassicGame(new ClassicGameInfo(getResources), FPS)
     game.addListener(gameListener())
     game.addListener(gameOverListener())
@@ -43,14 +50,29 @@ class ClassicGameActivity extends Activity {
     screen.setOnTouchListener(new TouchPadListener(game, getResources.getDimensionPixelSize(R.dimen.block_size)))
   }
 
+  private def initPauseDialog(): Unit = {
+    pauseDialog = new PauseDialog(this, new PauseDialogListener {
+      def onExitPressed(): Unit = finish()
+      def onResumePressed(): Unit = game.start(); isPaused = false
+    })
+  }
+
   override def onPause(): Unit = {
     super.onPause()
     game.pause()
+    isPaused = true
   }
 
   override def onResume(): Unit = {
     super.onResume()
-    game.start()
+    if (isPaused) pauseDialog.show()
+    else game.start()
+  }
+
+  override def onBackPressed(): Unit = {
+    isPaused = true
+    game.pause()
+    pauseDialog.show()
   }
 
 }
@@ -61,10 +83,7 @@ private class ClassicGameInfo(r: Resources) extends GameInfo {
   val blockSize = r.getDimensionPixelSize(R.dimen.block_size)
 
   def gameWidth: Int = gWidth
-
   def gameHeight: Int = gHeight
-
   def blockWidth: Int = blockSize
-
   def blockHeight: Int = blockSize
 }

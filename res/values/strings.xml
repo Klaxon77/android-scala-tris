@@ -7,4 +7,12 @@
     <string name="exit">Exit</string>
     <string name="score">Score:</string>
     <string name="level">Level:</string>
+
+    <!-- Pause menu -->
+    <string name="pause">PAUSE</string>
+    <array name="pause_menu_items">
+        <item>Resume</item>
+        <item>Exit</item>
+    </array>
+
 </resources>

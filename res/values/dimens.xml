@@ -25,7 +25,11 @@
 
     <!-- Score -->
     <dimen name="info_label_text_size">20dp</dimen>
-    <dimen name="info_text_size">24dp</dimen>
+    <dimen name="info_text_size">26dp</dimen>
+
+    <!-- Pause menu -->
+    <dimen name="pause_menu_text_size">20dp</dimen>
+
 
 
 </resources>
