@@ -16,12 +16,17 @@
             </intent-filter>
         </activity>
 
+        <!-- Top scores -->
+        <activity
+            android:name=".topscore.TopScoreActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:screenOrientation="portrait"/>
+
         <!-- Classical -->
         <activity
             android:name=".classical.ClassicGameActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:screenOrientation="portrait"/>
-
 
     </application>
 </manifest>

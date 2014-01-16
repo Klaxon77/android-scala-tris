@@ -5,9 +5,9 @@ import android.os.Bundle
 import com.klaxon.tris.R
 import com.klaxon.tris.classical.view.ClassicView
 import com.klaxon.tris.game.{GameListener, Game}
-import android.widget.{TextView, Toast}
+import android.widget.Toast
 import android.content.res.Resources
-import android.util.Log
+import android.content.Intent
 
 /**
  * <p>User: v.pronyshyn<br/>
@@ -15,7 +15,6 @@ import android.util.Log
  */
 class ClassicGameActivity extends Activity {
 
-  val FPS = 60
   var game: Game = _
   var pauseDialog: PauseDialog = _
   var isPaused = false
@@ -24,37 +23,40 @@ class ClassicGameActivity extends Activity {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.classical_layout)
 
-    initGame()
-    initPauseDialog()
+    game = newGame()
+    pauseDialog = newPauseDialog(game)
   }
 
-  private def initGame() = {
-    game = new ClassicGame(new ClassicGameInfo(getResources), FPS)
+  private def newGame(): Game = {
+    val game = new ClassicGame(new ClassicGameInfo(getResources), ClassicGameActivity.FPS)
     game.addListener(gameListener())
     game.addListener(gameOverListener())
 
-    initManipulator()
+    initManipulator(game)
+    game
   }
 
   private def gameListener(): GameListener = new ClassicView(findViewById(R.id.screen))
 
   private def gameOverListener(): GameListener = new GameListener {
-    override def onGameOver(): Unit = {
-      Toast.makeText(ClassicGameActivity.this, "Game over", 1500).show()
-      finish()
-    }
+    override def onGameOver(): Unit = finishWithResult(game.score)
   }
 
-  private def initManipulator() {
+  private def initManipulator(game: Game) {
     val screen = findViewById(R.id.screen)
     screen.setOnTouchListener(new TouchPadListener(game, getResources.getDimensionPixelSize(R.dimen.block_size)))
   }
 
-  private def initPauseDialog(): Unit = {
-    pauseDialog = new PauseDialog(this, new PauseDialogListener {
-      def onExitPressed(): Unit = finish()
-      def onResumePressed(): Unit = game.start(); isPaused = false
-    })
+  private def newPauseDialog(game: Game): PauseDialog = new PauseDialog(this, new PauseDialogListener {
+    def onExitPressed(): Unit = finishWithResult(game.score)
+    def onResumePressed(): Unit = game.start(); isPaused = false
+  })
+
+  private def finishWithResult(score: Int) = {
+    val intent = new Intent()
+    intent.putExtra(ClassicGameActivity.SCORE_KEY, score)
+    setResult(Activity.RESULT_OK, intent)
+    finish()
   }
 
   override def onPause(): Unit = {
@@ -77,10 +79,15 @@ class ClassicGameActivity extends Activity {
 
 }
 
+object ClassicGameActivity {
+  private val FPS = 60
+  val SCORE_KEY = "score"
+}
+
 private class ClassicGameInfo(r: Resources) extends GameInfo {
-  val gWidth = r.getDimensionPixelSize(R.dimen.game_width)
-  val gHeight = r.getDimensionPixelSize(R.dimen.game_height)
-  val blockSize = r.getDimensionPixelSize(R.dimen.block_size)
+  private val gWidth = r.getDimensionPixelSize(R.dimen.game_width)
+  private val gHeight = r.getDimensionPixelSize(R.dimen.game_height)
+  private val blockSize = r.getDimensionPixelSize(R.dimen.block_size)
 
   def gameWidth: Int = gWidth
   def gameHeight: Int = gHeight

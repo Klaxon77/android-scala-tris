@@ -4,6 +4,7 @@
     <string name="menu_header">GAME</string>
     <string name="play">Play</string>
     <string name="score_board">Score board</string>
+    <string name="no_top_score">No top scores yet</string>
     <string name="exit">Exit</string>
     <string name="score">Score:</string>
     <string name="level">Level:</string>

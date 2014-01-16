@@ -30,6 +30,7 @@
     <!-- Pause menu -->
     <dimen name="pause_menu_text_size">20dp</dimen>
 
-
+    <!-- Top score -->
+    <dimen name="top_score_padding">8dp</dimen>
 
 </resources>

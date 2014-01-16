@@ -26,11 +26,13 @@ class ClassicGame(gameInfo: GameInfo, fps: Int) extends Game with SimpleLevelCom
   private var currentFigure = MatrixFactory.randFigure()
   private var nextFigure = MatrixFactory.randFigure()
   private var position = initialPositionFor(currentFigure)
-  private var viewYPos = position.y * gameInfo.blockHeight
+  private var viewYPos: Double = position.y * gameInfo.blockHeight
 
   private var horizontalMove = 0
   private var downMove = false
   private var rotateMove = false
+
+  def ySpeed() = levelCalculator.currentLevel * 0.3
 
   def left(): Unit = horizontalMove -= 1
 
@@ -113,7 +115,7 @@ class ClassicGame(gameInfo: GameInfo, fps: Int) extends Game with SimpleLevelCom
   }
 
   private def updateGame(): Unit = {
-    viewYPos += levelCalculator.currentLevel
+    viewYPos += ySpeed()
     if (viewYPos / gameInfo.blockHeight < position.y) return
 
     val newPosition = nextPosition()
@@ -191,7 +193,7 @@ class ClassicGame(gameInfo: GameInfo, fps: Int) extends Game with SimpleLevelCom
   }
 
   private def updateView() = {
-    val viewCurrentPosition = new Point(position.x * gameInfo.blockWidth, viewYPos - (INVISIBLE_BOARD_PART_HEIGHT * gameInfo.blockHeight))
+    val viewCurrentPosition = new Point(position.x * gameInfo.blockWidth, viewYPos.toInt - (INVISIBLE_BOARD_PART_HEIGHT * gameInfo.blockHeight))
     val visibleBoard = board.drop(INVISIBLE_BOARD_PART_HEIGHT)
 
     notifyWorldChanged(new WorldState(visibleBoard, currentFigure, viewCurrentPosition))
