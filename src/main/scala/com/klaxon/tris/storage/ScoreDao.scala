@@ -4,6 +4,7 @@ import scala.Array
 import android.content.{ContentValues, Context}
 import android.database.Cursor
 import scala.annotation.tailrec
+import android.util.Log
 
 /**
  * <p>date 1/9/14 </p>
@@ -32,17 +33,16 @@ class ScoreDao(c: Context) {
   }
 
   private def scoresFrom(cursor: Cursor): List[Int] = {
-    @tailrec
-    def scoresFromRec(cursor: Cursor, scores: List[Int]): List[Int] = {
-      if (cursor.isAfterLast) {
-        cursor.close()
-        scores
-      }
-      else scoresFromRec(cursor, cursor.getInt(0) :: scores)
+    cursor.moveToFirst()
+
+    var scores: List[Int] = Nil
+    while (!cursor.isAfterLast) {
+      scores ::= cursor.getInt(0)
+      cursor.moveToNext()
     }
 
-    cursor.moveToFirst()
-    scoresFromRec(cursor, Nil)
+    cursor.close()
+    scores
   }
 
   def saveScore(score: Int) = {
