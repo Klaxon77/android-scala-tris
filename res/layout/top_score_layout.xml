@@ -21,20 +21,29 @@
 
     <include layout="@layout/menu_divider"/>
 
-    <ListView
-        android:id="@android:id/list"
+    <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:drawSelectorOnTop="false"/>
+        android:layout_height="fill_parent">
 
-    <TextView
-        android:id="@android:id/empty"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="@string/no_top_score"
-        android:textSize="@dimen/menu_item_text_size"
-        android:gravity="center"
-        />
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:drawSelectorOnTop="false"
+            android:clickable="false"
+            android:isScrollContainer="false"
+            />
+
+        <TextView
+            android:id="@android:id/empty"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="@string/no_top_score"
+            android:textSize="@dimen/menu_item_text_size"
+            android:gravity="center"
+            />
+
+    </FrameLayout>
 
 </LinearLayout>

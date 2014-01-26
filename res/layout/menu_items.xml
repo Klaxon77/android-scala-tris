@@ -18,7 +18,21 @@
         android:textSize="@dimen/menu_item_text_size"
         android:background="@drawable/menu_item_selector"
         android:clickable="true"
-        android:text="@string/play"
+        android:text="@string/classic"
+        />
+
+    <include layout="@layout/menu_divider"/>
+
+    <TextView
+        android:id="@+id/cylinder"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:gravity="center"
+        android:padding="@dimen/menu_item_padding"
+        android:textSize="@dimen/menu_item_text_size"
+        android:background="@drawable/menu_item_selector"
+        android:clickable="true"
+        android:text="@string/cylinder"
         />
 
     <include layout="@layout/menu_divider"/>

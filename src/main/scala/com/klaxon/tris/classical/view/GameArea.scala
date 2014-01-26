@@ -2,7 +2,7 @@ package com.klaxon.tris.classical.view
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
+import android.view.{SurfaceView, View}
 import com.klaxon.tris.game.WorldState
 import android.graphics.{Rect, Canvas}
 import com.klaxon.tris.R
@@ -12,7 +12,7 @@ import android.graphics.drawable.Drawable
  * <p>User: v.pronyshyn<br/>
  * Date: 12/8/13</p>
  */
-class GameArea(c: Context, a: AttributeSet) extends View(c, a) {
+class GameArea(c: Context, a: AttributeSet) extends SurfaceView(c, a) {
 
   var world: WorldState = null
   val blockSize = getResources.getDimensionPixelSize(R.dimen.block_size)

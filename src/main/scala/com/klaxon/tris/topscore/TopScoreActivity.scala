@@ -16,7 +16,7 @@ class TopScoreActivity extends ListActivity {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.top_score_layout)
 
-    val adapter = new ArrayAdapter[String](this, android.R.layout.simple_list_item_1, android.R.id.text1, scoreArray)
+    val adapter = new ArrayAdapter[String](this, R.layout.top_score_item_layout, R.id.text, scoreArray)
     setListAdapter(adapter)
   }
 
